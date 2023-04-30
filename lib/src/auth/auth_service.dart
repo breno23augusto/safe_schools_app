@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 class AuthService with ChangeNotifier {
   static const String _authTokenKey = 'auth_token';
   static const String _apiBasePath =
-      'http://56c1-2804-16c-646-6700-6807-546e-d7c2-ff31.ngrok.io';
+      'http://387e-2804-16c-646-6700-e511-7790-9d58-6c41.ngrok.io';
 
   User? _user;
   final _storage = const FlutterSecureStorage();
@@ -106,6 +106,7 @@ class AuthService with ChangeNotifier {
         'Accept': 'application/json',
       };
     }
+
     String? authToken = await _storage.read(key: _authTokenKey);
 
     if (authToken == null) {
