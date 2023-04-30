@@ -100,23 +100,22 @@ class AuthService with ChangeNotifier {
   }
 
   Future<Map<String, String>> _header(bool isAuth) async {
-    if (isAuth) {
-      String? authToken = await _storage.read(key: _authTokenKey);
-
-      if (authToken == null) {
-        throw Exception('Not Logged.');
-      }
-
+    if (!isAuth) {
       return {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': 'Bearer $authToken',
       };
+    }
+    String? authToken = await _storage.read(key: _authTokenKey);
+
+    if (authToken == null) {
+      throw Exception('Not Logged.');
     }
 
     return {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
+      'Authorization': 'Bearer $authToken',
     };
   }
 }
