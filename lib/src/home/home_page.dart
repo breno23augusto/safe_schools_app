@@ -14,7 +14,9 @@ class HomePage extends StatelessWidget {
       pageTitle: 'Home',
       child: Center(
         child: ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(context, "/reports");
+          },
           child: Text(authService.user?.login ?? ''),
         ),
       ),

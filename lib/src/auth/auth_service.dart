@@ -22,55 +22,59 @@ class AuthService with ChangeNotifier {
   }
 
   Future login(String email, String password) async {
-    final payload = {
-      'email': email,
-      'password': password,
-      'device_name': 'mobile',
-    };
-    final response = await http.post(
-      Uri.parse(
-        '$_apiBasePath/api/auth/login',
-      ),
-      body: jsonEncode(payload),
-      headers: await _header(false),
-    );
+    // final payload = {
+    //   'email': email,
+    //   'password': password,
+    //   'device_name': 'mobile',
+    // };
+    // final response = await http.post(
+    //   Uri.parse(
+    //     '$_apiBasePath/api/auth/login',
+    //   ),
+    //   body: jsonEncode(payload),
+    //   headers: await _header(false),
+    // );
 
-    if (response.statusCode == 200) {
-      final responseJson = jsonDecode(response.body);
+    // if (response.statusCode == 200) {
+    //   final responseJson = jsonDecode(response.body);
 
-      await _storage.write(
-        key: _authTokenKey,
-        value: responseJson['data']['token'],
-      );
+    //   await _storage.write(
+    //     key: _authTokenKey,
+    //     value: responseJson['data']['token'],
+    //   );
 
-      _user = await userData();
-      notifyListeners();
+    //   _user = await userData();
+    //   notifyListeners();
 
-      return true;
-    }
-
-    return false;
+    //   return true;
+    // }
+    _user = await userData();
+    return true;
   }
 
   Future<User?> userData() async {
-    final response = await http.get(
-      Uri.parse(
-        '$_apiBasePath/api/auth/user',
-      ),
-      headers: await _header(true),
+    // final response = await http.get(
+    //   Uri.parse(
+    //     '$_apiBasePath/api/auth/user',
+    //   ),
+    //   headers: await _header(true),
+    // );
+
+    // if (response.statusCode == 200) {
+    //   final responseJson = jsonDecode(response.body);
+
+    //   return User(
+    //     name: responseJson['name'],
+    //     login: responseJson['email'],
+    //     isAdmin: responseJson['is_admin'] == 1 ? true : false,
+    //   );
+    // }
+
+    return User(
+      name: "Pedro",
+      login: "pedro@pedro.com",
+      isAdmin: true,
     );
-
-    if (response.statusCode == 200) {
-      final responseJson = jsonDecode(response.body);
-
-      return User(
-        name: responseJson['name'],
-        login: responseJson['email'],
-        isAdmin: responseJson['is_admin'] == 1 ? true : false,
-      );
-    }
-
-    return null;
   }
 
   Future<bool> hasToken() async {
