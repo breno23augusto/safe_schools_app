@@ -22,7 +22,7 @@ class AuthService with ChangeNotifier {
   }
 
   Future login(String email, String password) async {
-    final payload = {
+    /* final payload = {
       'email': email,
       'password': password,
       'device_name': 'mobile',
@@ -48,12 +48,14 @@ class AuthService with ChangeNotifier {
 
       return true;
     }
-
     return false;
+    */
+    _user = await userData();
+    return true;
   }
 
   Future<User?> userData() async {
-    final response = await http.get(
+    /*final response = await http.get(
       Uri.parse(
         '$_apiBasePath/api/auth/user',
       ),
@@ -69,8 +71,15 @@ class AuthService with ChangeNotifier {
         isAdmin: responseJson['is_admin'] == 1 ? true : false,
       );
     }
-
+    
     return null;
+    */
+
+    return User(
+      name: 'admin',
+      login: 'admin@localhost',
+      isAdmin: true,
+    );
   }
 
   Future<bool> hasToken() async {
