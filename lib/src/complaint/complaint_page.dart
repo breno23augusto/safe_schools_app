@@ -39,7 +39,7 @@ class _SignUpFormState extends State<SignUpComplaint> {
   String _maritalStatus = 'single';
   String _localFact = '';
 
-  bool _termsChecked = false;
+  bool _anonymousMode = false;
 
 //Mapa da Lista de estados ele compara o valor do estado e as escolas dele
 //e apresenta no formulário escola
@@ -252,39 +252,33 @@ class _SignUpFormState extends State<SignUpComplaint> {
         ),
       ),
     );
-    //Abaixo o checkbox de LGPD
+
+    //Enviar de forma anonima? True = sim (Padrão desabilitado)
     formWidget.add(Container(
       margin: const EdgeInsets.only(top: 24),
       child: CheckboxListTile(
-        value: _termsChecked,
+        value: _anonymousMode,
         onChanged: (value) {
           setState(() {
-            _termsChecked = value.toString().toLowerCase() == 'true';
+            _anonymousMode = value.toString().toLowerCase() == 'true';
           });
         },
-        subtitle: !_termsChecked
-            ? const Text(
-                'Obrigatório',
-                style: TextStyle(color: Colors.red, fontSize: 10.0),
-              )
-            : null,
         title: const Text(
-          'Aceito o envio das minhas informações pela LGPD Lei 13.709, 14/08/2018',
+          'Enviar de forma Anônima?',
           style: TextStyle(fontSize: 16.0),
         ),
         controlAffinity: ListTileControlAffinity.leading,
       ),
     ));
-
     void onPressedSubmit() {
-      if (_formKey.currentState!.validate() && _termsChecked) {
+      if (_formKey.currentState!.validate()) {
         _formKey.currentState?.save();
 
         print("Destinatário: " + _selectedDestiny.toString());
         print("Estado: " + _selectedState.toString());
         print("Escola: " + _selectedSchool.toString());
         print("Descrição: " + _description);
-        print("Termos de uso: " + _termsChecked.toString());
+        print("Enviado como Anonimo?: " + _anonymousMode.toString());
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text('Form Submitted')));
       }
@@ -295,7 +289,9 @@ class _SignUpFormState extends State<SignUpComplaint> {
         margin: const EdgeInsets.only(top: 25),
         child: ElevatedButton(
           onPressed: onPressedSubmit, // Chama o método onPressedSubmit
-          child: const Text('Enviar'),
+          child: Text(
+            'Enviar',
+          ),
         ),
       ),
     );
