@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:safe_schools/src/complaint/complaint_repository.dart';
+import 'package:safe_schools/src/complaint/entities/complaint.dart';
 import 'package:safe_schools/src/shared/components/app_scaffold.dart';
 
 class ComplaintPage extends StatefulWidget {
@@ -37,19 +39,18 @@ class _SignUpFormState extends State<SignUpComplaint> {
 
   String _description = '';
   String _maritalStatus = 'single';
-  String _localFact = '';
 
   bool _anonymousMode = false;
 
 //Mapa da Lista de estados ele compara o valor do estado e as escolas dele
 //e apresenta no formulário escola
   Map<String, List<String>> stateSchools = {
-    'Goiás': [
+    'GO': [
       'Escola Goiana de Letras',
       'Instituto federal Goiano Campus Catalão',
       'Instituto Margon Vaz'
     ],
-    'Minas Gerais': [
+    'MG': [
       'UFU Campo Santa Monica',
       'Instituto Federal de Uberlandia',
       'Instituto Federal Mineiro'
@@ -80,14 +81,14 @@ class _SignUpFormState extends State<SignUpComplaint> {
     stateList = [];
     stateList.add(
       const DropdownMenuItem(
-        child: Text('Goiás'),
-        value: 'Goiás',
+        child: Text('GO'),
+        value: 'GO',
       ),
     );
     stateList.add(
       const DropdownMenuItem(
-        child: Text('Minas Gerais'),
-        value: 'Minas Gerais',
+        child: Text('MG'),
+        value: 'MG',
       ),
     );
 
@@ -279,6 +280,14 @@ class _SignUpFormState extends State<SignUpComplaint> {
         print("Escola: " + _selectedSchool.toString());
         print("Descrição: " + _description);
         print("Enviado como Anonimo?: " + _anonymousMode.toString());
+
+        ComplaintRepository().store(Complaint(
+          schoolId: 1, //todo: set school id
+          organizationId: _selectedDestiny,
+          isAnonymous: _anonymousMode,
+          description: _description,
+        ));
+
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text('Form Submitted')));
       }
