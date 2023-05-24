@@ -4,6 +4,12 @@ import 'package:safe_schools/src/complaint/complaint_repository.dart';
 import 'package:safe_schools/src/complaint/entities/complaint.dart';
 import 'package:safe_schools/src/shared/components/app_scaffold.dart';
 
+/*
+Edições:
+Adicionar value no campo description, não está enviado para o a variavel description o valor
+Campo escola: Converter para int o valor que passar para la e não mais string
+*/
+
 class ComplaintPage extends StatefulWidget {
   const ComplaintPage({super.key});
 
