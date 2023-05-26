@@ -4,12 +4,6 @@ import 'package:safe_schools/src/complaint/complaint_repository.dart';
 import 'package:safe_schools/src/complaint/entities/complaint.dart';
 import 'package:safe_schools/src/shared/components/app_scaffold.dart';
 
-/*
-Edições:
-Adicionar value no campo description, não está enviado para o a variavel description o valor
-Campo escola: Converter para int o valor que passar para la e não mais string
-*/
-
 class ComplaintPage extends StatefulWidget {
   const ComplaintPage({super.key});
 
@@ -21,7 +15,7 @@ class _FormPageState extends State<ComplaintPage> {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      pageTitle: 'Denúncia teste',
+      pageTitle: 'Denúncia',
       child: SignUpComplaint(),
     );
   }
@@ -42,11 +36,10 @@ class _SignUpFormState extends State<SignUpComplaint> {
   int _selectedDestiny = 0;
   int _selectedState = 0;
   String? _selectedSchool;
-
-  String _description = '';
-  String _maritalStatus = 'single';
-
   bool _anonymousMode = false;
+
+  //gera Controller para coletar dados da descrição.
+  final description = TextEditingController();
 
 //Mapa da Lista de estados ele compara o valor do estado e as escolas dele
 //e apresenta no formulário escola
@@ -244,6 +237,7 @@ class _SignUpFormState extends State<SignUpComplaint> {
       Container(
         margin: const EdgeInsets.only(top: 12),
         child: TextFormField(
+          controller: description,
           keyboardType: TextInputType.text,
           maxLines: 3,
           decoration: const InputDecoration(
@@ -259,8 +253,10 @@ class _SignUpFormState extends State<SignUpComplaint> {
         ),
       ),
     );
+    // Obtenha o valor do campo descrição
+    String? _description = description.text;
 
-    //Enviar de forma anonima? True = sim (Padrão desabilitado)
+    //Enviar de forma anonima? True = sim (Padrão desabilitado) pode ser substituido por 1 ou 0
     formWidget.add(Container(
       margin: const EdgeInsets.only(top: 24),
       child: CheckboxListTile(
@@ -280,6 +276,15 @@ class _SignUpFormState extends State<SignUpComplaint> {
     void onPressedSubmit() {
       if (_formKey.currentState!.validate()) {
         _formKey.currentState?.save();
+
+        String? position;
+
+        stateSchools.forEach((state, schools) {
+          int index = schools.indexOf(_selectedSchool!);
+          if (index != -1) {
+            _selectedSchool = '${index + 1}';
+          }
+        });
 
         print("Destinatário: " + _selectedDestiny.toString());
         print("Estado: " + _selectedState.toString());
