@@ -3,32 +3,32 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:safe_schools/src/shared/enums/states.dart';
 import 'package:http/http.dart' as http;
+import 'package:safe_schools/src/shared/settings/const_configs.dart';
 
 class SchoolRepository {
-  static const String _apiBasePath =
-      'http://56c1-2804-16c-646-6700-6807-546e-d7c2-ff31.ngrok.io';
+  static const String _apiBasePath = ConstConfig.apiUrl;
   static const String _authTokenKey = 'auth_token';
 
   final _storage = const FlutterSecureStorage();
 
   Future<Map<int, String>> index(States state) async {
-    // final response = await http.get(
-    //   Uri.parse(
-    //     "$_apiBasePath/api/schools?state=$state",
-    //   ),
-    //   headers: await _header(),
-    // );
+    final response = await http.get(
+      Uri.parse(
+        "$_apiBasePath/api/schools?state=${state.name}",
+      ),
+      headers: await _header(),
+    );
 
-    // if (response.statusCode != 200) {
-    //   return {};
-    // }
+    if (response.statusCode != 200) {
+      return {};
+    }
 
-    // final responseJson = jsonDecode(response.body);
+    final responseJson = jsonDecode(response.body);
+
     Map<int, String> output = {};
-    // for (var i = 0; i < responseJson["data"].length; i++) {
-    //   output[responseJson["data"][i]["id"]] = responseJson["data"][i]["name"];
-    // }
-    output[1] = "Escola Maluca";
+    for (var i = 0; i < responseJson["data"].length; i++) {
+      output[responseJson["data"][i]["id"]] = responseJson["data"][i]["name"];
+    }
 
     return output;
   }

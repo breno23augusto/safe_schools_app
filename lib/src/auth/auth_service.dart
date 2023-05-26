@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:safe_schools/src/auth/user.dart';
 import 'package:http/http.dart' as http;
+import 'package:safe_schools/src/shared/settings/const_configs.dart';
 
 class AuthService with ChangeNotifier {
   static const String _authTokenKey = 'auth_token';
-  static const String _apiBasePath =
-      'http://56c1-2804-16c-646-6700-6807-546e-d7c2-ff31.ngrok.io';
+  static const String _apiBasePath = ConstConfig.apiUrl;
 
   User? _user;
   final _storage = const FlutterSecureStorage();
@@ -22,7 +22,7 @@ class AuthService with ChangeNotifier {
   }
 
   Future login(String email, String password) async {
-    /* final payload = {
+    final payload = {
       'email': email,
       'password': password,
       'device_name': 'mobile',
@@ -49,13 +49,10 @@ class AuthService with ChangeNotifier {
       return true;
     }
     return false;
-    */
-    _user = await userData();
-    return true;
   }
 
   Future<User?> userData() async {
-    /*final response = await http.get(
+    final response = await http.get(
       Uri.parse(
         '$_apiBasePath/api/auth/user',
       ),
@@ -71,15 +68,8 @@ class AuthService with ChangeNotifier {
         isAdmin: responseJson['is_admin'] == 1 ? true : false,
       );
     }
-    
-    return null;
-    */
 
-    return User(
-      name: 'admin',
-      login: 'admin@localhost',
-      isAdmin: true,
-    );
+    return null;
   }
 
   Future<bool> hasToken() async {

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:safe_schools/src/complaint/complaint_repository.dart';
 import 'package:safe_schools/src/complaint/entities/complaint.dart';
 import 'package:safe_schools/src/shared/components/app_scaffold.dart';
+import 'package:safe_schools/src/shared/enums/states.dart';
+import 'package:safe_schools/src/shared/repositories/school_repository.dart';
 
 class ComplaintPage extends StatefulWidget {
   const ComplaintPage({super.key});
@@ -14,14 +15,19 @@ class ComplaintPage extends StatefulWidget {
 class _FormPageState extends State<ComplaintPage> {
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(
+    return const AppScaffold(
       pageTitle: 'Denúncia',
-      child: SignUpComplaint(),
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: SignUpComplaint(),
+      ),
     );
   }
 }
 
 class SignUpComplaint extends StatefulWidget {
+  const SignUpComplaint({super.key});
+
   @override
   _SignUpFormState createState() => _SignUpFormState();
 }
@@ -29,70 +35,20 @@ class SignUpComplaint extends StatefulWidget {
 class _SignUpFormState extends State<SignUpComplaint> {
   final _formKey = GlobalKey<FormState>();
 
-  List<DropdownMenuItem<int>> destinyList = [];
-  List<DropdownMenuItem<String>> stateList = [];
-  List<DropdownMenuItem<String>> schoolList = [];
+  List<DropdownMenuItem<int>> schoolList = [];
+  List<DropdownMenuItem<String>> stateList = States.values.map((States state) {
+    return DropdownMenuItem<String>(
+      value: state.toString(),
+      child: Text(state.name),
+    );
+  }).toList();
 
-  int _selectedDestiny = 0;
   int _selectedState = 0;
-  String? _selectedSchool;
+  int? _selectedSchool;
   bool _anonymousMode = false;
 
   //gera Controller para coletar dados da descrição.
   final description = TextEditingController();
-
-//Mapa da Lista de estados ele compara o valor do estado e as escolas dele
-//e apresenta no formulário escola
-  Map<String, List<String>> stateSchools = {
-    'GO': [
-      'Escola Goiana de Letras',
-      'Instituto federal Goiano Campus Catalão',
-      'Instituto Margon Vaz'
-    ],
-    'MG': [
-      'UFU Campo Santa Monica',
-      'Instituto Federal de Uberlandia',
-      'Instituto Federal Mineiro'
-    ],
-  };
-
-  @override
-  void initState() {
-    super.initState();
-    loadDropdownLists();
-  }
-
-  void loadDropdownLists() {
-    destinyList = [];
-    destinyList.add(
-      const DropdownMenuItem(
-        child: Text('Ministério da Educação'),
-        value: 0,
-      ),
-    );
-    destinyList.add(
-      const DropdownMenuItem(
-        child: Text('Policia Civil'),
-        value: 1,
-      ),
-    );
-
-    stateList = [];
-    stateList.add(
-      const DropdownMenuItem(
-        child: Text('GO'),
-        value: 'GO',
-      ),
-    );
-    stateList.add(
-      const DropdownMenuItem(
-        child: Text('MG'),
-        value: 'MG',
-      ),
-    );
-
-    updateSchoolList();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,56 +64,18 @@ class _SignUpFormState extends State<SignUpComplaint> {
     List<Widget> formWidget = [];
 
     formWidget.add(
-      Container(
-        margin: const EdgeInsets.only(top: 15),
-        child: Row(
-          children: [
-            const Icon(Icons.person),
-            const SizedBox(width: 8),
-            const Text(
-              'Destinatário',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+      Row(
+        children: const [
+          Icon(Icons.location_on),
+          SizedBox(width: 8),
+          Text(
+            'Estado',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
             ),
-          ],
-        ),
-      ),
-    );
-
-    formWidget.add(
-      Container(
-        margin: const EdgeInsets.only(top: 5),
-        child: DropdownButtonFormField<int>(
-          hint: const Text('Selecione o Orgão'),
-          items: destinyList,
-          value: _selectedDestiny,
-          onChanged: (value) {
-            setState(() {
-              _selectedDestiny = value!;
-            });
-          },
-          isExpanded: true,
-        ),
-      ),
-    );
-    formWidget.add(
-      Container(
-        margin: const EdgeInsets.only(top: 35),
-        child: Row(
-          children: [
-            const Icon(Icons.location_on),
-            const SizedBox(width: 8),
-            const Text(
-              'Estado',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
 
@@ -167,12 +85,29 @@ class _SignUpFormState extends State<SignUpComplaint> {
         child: DropdownButtonFormField<String>(
           hint: const Text('Selecione o Estado'),
           items: stateList,
-          value: stateList[_selectedState].value,
           onChanged: (value) {
             setState(() {
               _selectedState =
                   stateList.indexWhere((item) => item.value == value);
-              updateSchoolList();
+              States state = States.values.firstWhere(
+                  (e) => e.toString() == stateList[_selectedState].value);
+
+              SchoolRepository().index(state).then((value) {
+                schoolList = [];
+
+                setState(() {
+                  for (int chave in value.keys) {
+                    String valor = value[chave]!;
+                    print({chave: valor});
+                    schoolList.add(
+                      DropdownMenuItem(
+                        value: chave,
+                        child: Text(valor),
+                      ),
+                    );
+                  }
+                });
+              });
             });
           },
           isExpanded: true,
@@ -183,10 +118,10 @@ class _SignUpFormState extends State<SignUpComplaint> {
       Container(
         margin: const EdgeInsets.only(top: 35),
         child: Row(
-          children: [
-            const Icon(Icons.house),
-            const SizedBox(width: 8),
-            const Text(
+          children: const [
+            Icon(Icons.house),
+            SizedBox(width: 8),
+            Text(
               'Escola',
               style: TextStyle(
                 fontSize: 18,
@@ -201,7 +136,7 @@ class _SignUpFormState extends State<SignUpComplaint> {
     formWidget.add(
       Container(
         margin: const EdgeInsets.only(top: 5),
-        child: DropdownButtonFormField<String>(
+        child: DropdownButtonFormField<int>(
           hint: const Text('Escola'),
           items: schoolList,
           value: _selectedSchool,
@@ -218,10 +153,10 @@ class _SignUpFormState extends State<SignUpComplaint> {
       Container(
         margin: const EdgeInsets.only(top: 25),
         child: Row(
-          children: [
-            const Icon(Icons.chat_bubble),
-            const SizedBox(width: 8),
-            const Text(
+          children: const [
+            Icon(Icons.chat_bubble),
+            SizedBox(width: 8),
+            Text(
               'Descrição',
               style: TextStyle(
                 fontSize: 18,
@@ -263,7 +198,7 @@ class _SignUpFormState extends State<SignUpComplaint> {
         value: _anonymousMode,
         onChanged: (value) {
           setState(() {
-            _anonymousMode = value.toString().toLowerCase() == 'true';
+            _anonymousMode = value!;
           });
         },
         title: const Text(
@@ -277,24 +212,14 @@ class _SignUpFormState extends State<SignUpComplaint> {
       if (_formKey.currentState!.validate()) {
         _formKey.currentState?.save();
 
-        String? position;
-
-        stateSchools.forEach((state, schools) {
-          int index = schools.indexOf(_selectedSchool!);
-          if (index != -1) {
-            _selectedSchool = '${index + 1}';
-          }
-        });
-
-        print("Destinatário: " + _selectedDestiny.toString());
         print("Estado: " + _selectedState.toString());
         print("Escola: " + _selectedSchool.toString());
         print("Descrição: " + _description);
         print("Enviado como Anonimo?: " + _anonymousMode.toString());
 
         ComplaintRepository().store(Complaint(
-          schoolId: 1, //todo: set school id
-          organizationId: _selectedDestiny,
+          schoolId: _selectedSchool!,
+          organizationId: 1,
           isAnonymous: _anonymousMode,
           description: _description,
         ));
@@ -309,7 +234,7 @@ class _SignUpFormState extends State<SignUpComplaint> {
         margin: const EdgeInsets.only(top: 25),
         child: ElevatedButton(
           onPressed: onPressedSubmit, // Chama o método onPressedSubmit
-          child: Text(
+          child: const Text(
             'Enviar',
           ),
         ),
@@ -317,19 +242,5 @@ class _SignUpFormState extends State<SignUpComplaint> {
     );
 
     return formWidget;
-  }
-
-  void updateSchoolList() {
-    setState(() {
-      schoolList = stateSchools[stateList[_selectedState].value]!
-          .map<DropdownMenuItem<String>>(
-            (String value) => DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            ),
-          )
-          .toList();
-      _selectedSchool = schoolList.isNotEmpty ? schoolList[0].value : null;
-    });
   }
 }
