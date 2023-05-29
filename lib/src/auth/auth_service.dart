@@ -8,7 +8,7 @@ import 'package:safe_schools/src/shared/settings/const_configs.dart';
 
 class AuthService with ChangeNotifier {
   static const String _authTokenKey = 'auth_token';
-  static const String _apiBasePath = ConstConfig.apiUrl;
+  static const String _apiBasePath = ConstConfigs.apiUrl;
 
   User? _user;
   final _storage = const FlutterSecureStorage();
