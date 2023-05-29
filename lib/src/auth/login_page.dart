@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:safe_schools/src/auth/auth_service.dart';
-import 'package:safe_schools/src/shared/components/app_drawer.dart';
-import 'package:safe_schools/src/shared/components/app_scaffold.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
