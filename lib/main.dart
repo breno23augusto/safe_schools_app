@@ -4,10 +4,12 @@ import 'package:safe_schools/src/auth/auth_service.dart';
 import 'package:safe_schools/src/auth/login_page.dart';
 import 'package:safe_schools/src/auth/registraion_page.dart';
 import 'package:safe_schools/src/home/home_page.dart';
+import 'package:safe_schools/src/schools/school_form_page.dart';
+import 'package:safe_schools/src/schools/schools_list_page.dart';
 import 'package:safe_schools/src/shared/themes/color_schemes.g.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -43,6 +45,8 @@ class MyApp extends StatelessWidget {
         '/auth/login': (context) => const LoginPage(),
         '/auth/registration': (context) => const RegistrationPage(),
         '/home': (context) => const HomePage(),
+        '/schools/list': (context) => const SchoolsListPage(),
+        '/schools/form': (context) => const SchoolFormPage(),
       },
     );
   }
