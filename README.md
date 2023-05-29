@@ -19,16 +19,14 @@ samples, guidance on mobile development, and a full API reference.
 
 This component aims to create a complaint form that records data such as:
 - title: Denúncia Anonima / Denúncia.
-- Input Lista: Destinatario (Policia Civil, etc, etc Ministério da educação);
-- Input Lista: Descrição (Listar aqui um assunto para a Denúncia);
-- input Text Box: inserir descrição completa do fato ocorrido com as palavras chaves.
 
 - title: Local do Fato
-- input UF - selecionar o estado
+- input UF - selecionar o estado (GO examplo)
     - Input Lista: Gera todas as escolas daquele UF especifico.
 
-- title: Envolvidos nos fatos
-- input text - inserir nomes
-- input text - função do envolvido
+- title: Descrição
+    - inpout - para inserção da descrição do ocorrido.
+- input btn - input para confirmar se é anonimo ou não.
+
 
 
