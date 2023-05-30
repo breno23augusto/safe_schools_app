@@ -47,6 +47,12 @@ class AppDrawer extends StatelessWidget {
             },
           ),
           ListTile(
+            title: const Text('Painel'),
+            onTap: () {
+              Navigator.pushNamed(context, '/panel');
+            },
+          ),
+          ListTile(
             title: const Text('Sair'),
             onTap: () {
               authService.logout().then((value) => value);
