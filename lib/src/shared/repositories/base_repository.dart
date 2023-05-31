@@ -1,8 +1,9 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:safe_schools/src/shared/settings/const_configs.dart';
 
 abstract class BaseRepository {
   static const String _authTokenKey = 'auth_token';
-  static const String apiBasePath = 'http://localhost:8088';
+  static const String apiBasePath = ConstConfigs.apiUrl;
 
   final _storage = const FlutterSecureStorage();
 
