@@ -92,11 +92,15 @@ class FormItems extends StatelessWidget {
               const SizedBox(height: 12.0),
               ElevatedButton(
                   onPressed: () async {
-                    var registrationResponse = await RegistrationRepository()
-                        .store(Registration(
-                            email: email.text,
-                            password: password.text,
-                            name: userName.text));
+                    var registrationResponse =
+                        await RegistrationRepository().store(
+                      Registration(
+                        email: email.text,
+                        password: password.text,
+                        name: userName.text,
+                      ),
+                    );
+
                     if (registrationResponse.error) {
                       // ignore: use_build_context_synchronously
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -124,6 +128,9 @@ class FormItems extends StatelessWidget {
                                   ),
                                 ],
                               ))));
+                    } else {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pushNamed('/auth/login');
                     }
                   },
                   style: const ButtonStyle(),

@@ -20,12 +20,14 @@ class RegistrationRepository {
     };
 
     final response = await http.post(
-        Uri.parse('$_apiBasePath/api/auth/registration'),
-        body: json.encode(payload),
-        headers: _headers());
+      Uri.parse('$_apiBasePath/api/auth/registration'),
+      body: json.encode(payload),
+      headers: _headers(),
+    );
+
     return (
       error: response.statusCode != 201,
-      reason: json.decode(response.body)['message'] as String
+      reason: "Falha ao cadastrar o usuário."
     );
   }
 

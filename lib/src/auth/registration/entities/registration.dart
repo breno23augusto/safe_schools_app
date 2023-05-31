@@ -4,9 +4,10 @@ class Registration {
   final String password;
   final String email;
 
-  Registration(
-      {this.id,
-      required this.name,
-      required this.password,
-      required this.email});
+  Registration({
+    this.id,
+    required this.name,
+    required this.password,
+    required this.email,
+  });
 }
