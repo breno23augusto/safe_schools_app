@@ -22,20 +22,17 @@ class RegistrationRepository {
     final response = await http.post(
         Uri.parse('$_apiBasePath/api/auth/registration'),
         body: json.encode(payload),
-        headers: await _auth());
+        headers: await _headers());
     return (
       error: response.statusCode != 201,
       reason: json.decode(response.body)['message'] as String
     );
   }
 
-  Future<Map<String, String>> _auth() async {
-    String? authToken = await _storage.read(key: _authTokenKey);
-
+  Future<Map<String, String>> _headers() async {
     return {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Authorization': 'Bearer $authToken',
     };
   }
 }
