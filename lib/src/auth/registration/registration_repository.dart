@@ -22,14 +22,14 @@ class RegistrationRepository {
     final response = await http.post(
         Uri.parse('$_apiBasePath/api/auth/registration'),
         body: json.encode(payload),
-        headers: await _headers());
+        headers: _headers());
     return (
       error: response.statusCode != 201,
       reason: json.decode(response.body)['message'] as String
     );
   }
 
-  Future<Map<String, String>> _headers() async {
+  Map<String, String> _headers() {
     return {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
