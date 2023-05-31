@@ -6,6 +6,8 @@ import 'package:safe_schools/src/schools/school.dart';
 import 'package:safe_schools/src/schools/schools_repository.dart';
 import 'package:safe_schools/src/shared/states.dart';
 
+import '../shared/enums/states.dart';
+
 class SchoolFormPage extends StatefulWidget {
   final School? school;
 
