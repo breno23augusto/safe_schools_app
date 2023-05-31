@@ -1,6 +1,10 @@
+// ignore_for_file: unused_field
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:safe_schools/src/schools/school.dart';
 import 'package:safe_schools/src/schools/schools_repository.dart';
+import 'package:safe_schools/src/shared/states.dart';
 
 class SchoolFormPage extends StatefulWidget {
   final School? school;
@@ -14,6 +18,9 @@ class SchoolFormPage extends StatefulWidget {
 
 class _SchoolFormPageState extends State<SchoolFormPage> {
   final _formKey = GlobalKey<FormState>();
+
+  States? selectedState;
+  List<DropdownMenuItem<States>>? _stateDropdownItems;
 
   late int _id;
   late TextEditingController _nameController;
@@ -39,6 +46,13 @@ class _SchoolFormPageState extends State<SchoolFormPage> {
         TextEditingController(text: widget.school?.complement ?? '');
     _cityController = TextEditingController(text: widget.school?.city ?? '');
     _stateController = TextEditingController(text: widget.school?.state ?? '');
+
+    _stateDropdownItems = States.values.map((state) {
+      return DropdownMenuItem<States>(
+        value: state,
+        child: Text(state.toString().split('.').last),
+      );
+    }).toList();
   }
 
   @override
@@ -63,19 +77,21 @@ class _SchoolFormPageState extends State<SchoolFormPage> {
         neighborhood: _neighborhoodController.text,
         complement: _complementController.text,
         city: _cityController.text,
-        state: _stateController.text,
+        state: _stateController.text.split('.').last,
       );
 
       try {
         if (_id == 0) {
-          await SchoolsRepository.createSchool(school);
+          await SchoolsRepository().createSchool(school);
         } else {
-          await SchoolsRepository.updateSchool(school);
+          await SchoolsRepository().updateSchool(school);
         }
         // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Escola salva com sucesso.')),
         );
+        // ignore: use_build_context_synchronously
+        Navigator.pushNamed(context, '/schools/list');
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: $e')),
@@ -98,67 +114,78 @@ class _SchoolFormPageState extends State<SchoolFormPage> {
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Name'),
+                decoration: const InputDecoration(labelText: 'Nome'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a name.';
+                    return 'Campo Obrigatorio!';
                   }
                   return null;
                 },
               ),
               TextFormField(
                 controller: _streetController,
-                decoration: const InputDecoration(labelText: 'Street'),
+                decoration: const InputDecoration(labelText: 'Rua'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a street.';
+                    return 'Campo Obrigatorio!';
                   }
                   return null;
                 },
               ),
               TextFormField(
                 controller: _numberController,
-                decoration: const InputDecoration(labelText: 'Number'),
+                decoration: const InputDecoration(labelText: 'Número'),
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp('[0-9.,]')),
+                ],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a number.';
+                    return 'Campo Obrigatorio!';
                   }
                   return null;
                 },
               ),
               TextFormField(
                 controller: _neighborhoodController,
-                decoration: const InputDecoration(labelText: 'Neighborhood'),
+                decoration: const InputDecoration(labelText: 'Bairro'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a neighborhood.';
+                    return 'Campo Obrigatorio!';
                   }
                   return null;
                 },
               ),
               TextFormField(
                 controller: _complementController,
-                decoration: const InputDecoration(labelText: 'Complement'),
+                decoration: const InputDecoration(labelText: 'Complemento'),
               ),
               TextFormField(
                 controller: _cityController,
-                decoration: const InputDecoration(labelText: 'City'),
+                decoration: const InputDecoration(labelText: 'Cidade'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a city.';
+                    return 'Campo Obrigatorio!';
                   }
                   return null;
                 },
               ),
-              TextFormField(
-                controller: _stateController,
-                decoration: const InputDecoration(labelText: 'State'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a state.';
+              DropdownButtonFormField<States>(
+                value: selectedState,
+                items: _stateDropdownItems,
+                onChanged: (selectedValue) {
+                  setState(() {
+                    selectedState = selectedValue;
+                    _stateController.text = selectedValue.toString();
+                  });
+                },
+                validator: (state) {
+                  if (state == null) {
+                    return 'Campo Obrigatorio!';
                   }
                   return null;
                 },
+                decoration: const InputDecoration(labelText: 'Estado'),
               ),
               const SizedBox(height: 16),
               ElevatedButton(
