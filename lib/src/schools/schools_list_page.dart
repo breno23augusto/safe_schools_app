@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:safe_schools/src/schools/school.dart';
 import 'package:safe_schools/src/schools/school_form_page.dart';
@@ -9,10 +11,13 @@ class SchoolsListPage extends StatefulWidget {
   const SchoolsListPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _SchoolsListPageState createState() => _SchoolsListPageState();
 }
 
 class _SchoolsListPageState extends State<SchoolsListPage> {
+  late Future<List<School>> schools;
+
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
@@ -28,38 +33,25 @@ class _SchoolsListPageState extends State<SchoolsListPage> {
 
   int present = 0;
   int perPage = 15;
-  late Future<List<School>> _schools;
 
   @override
   void initState() {
     super.initState();
-    _schools = fetchSchools();
+    schools = fetchSchools();
   }
 
   Future<List<School>> fetchSchools() async {
     try {
-      final schools = await SchoolsRepository().getSchools();
+      schools = SchoolsRepository().getSchools();
 
       setState(() {
-        _schools = schools as Future<List<School>>;
+        schools = schools;
       });
+      return schools;
     } catch (e) {
       throw Exception(e);
     }
-    throw Exception('teste');
   }
-
-  // void loadMore() {
-  //   setState(() {
-  //     if ((present + perPage) > originalItems.length) {
-  //       schools.addAll(originalItems.getRange(present, originalItems.length));
-  //     } else {
-  //       schools.addAll(originalItems.getRange(present, present + perPage));
-  //     }
-  //     present = present + perPage;
-  //   });
-  // }
-  //
 
   Widget _floatButton() {
     return Builder(builder: (context) {
@@ -74,10 +66,8 @@ class _SchoolsListPageState extends State<SchoolsListPage> {
                     builder: (context) => const SchoolFormPage(),
                   ));
             },
-            //hoverElevation: 50,
             tooltip: 'Novo',
             shape: const CircleBorder(),
-
             backgroundColor: Colors.blue,
             child: const Icon(Icons.add,
                 color: Colors.white, size: 30, weight: 950),
@@ -87,36 +77,108 @@ class _SchoolsListPageState extends State<SchoolsListPage> {
     });
   }
 
-  Widget _buildSchoolsList() => FutureBuilder<List<School>>(
-      future: _schools,
+  Future<void> _refreshSchools() async {
+    setState(() {
+      schools = fetchSchools();
+    });
+  }
+
+  Widget _buildSchoolsList() {
+    return FutureBuilder<List<School>>(
+      future: schools,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Column(children: [
-            CircularProgressIndicator(),
-          ]);
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         } else if (snapshot.hasError) {
-          return Column(children: [
-            Center(
-              child: Text('Algo inesperado aconteceu: ${snapshot.error}'),
-            )
-          ]);
-        } else if (snapshot.hasData && snapshot.data!.isEmpty) {
-          return const Column(children: [
-            Center(child: Text('No schools found.')),
-          ]);
+          return Column(
+            children: [
+              Center(
+                child: Text('Algo inesperado aconteceu: ${snapshot.error}'),
+              ),
+            ],
+          );
+        } else if (snapshot.hasData) {
+          final schools = snapshot.data!;
+          if (schools.isEmpty) {
+            return const SingleChildScrollView(
+                child: Column(
+              children: [
+                Center(child: Text('Nenhuma Escola foi encontrada.')),
+              ],
+            ));
+          } else {
+            return Expanded(
+                child: ListView.builder(
+              itemCount: schools.length,
+              itemBuilder: (context, index) {
+                final school = schools[index];
+                return ListTile(
+                  title: Text(school.name),
+                  subtitle: Text(
+                      '${school.street} - ${school.city} - ${school.state}'),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  SchoolFormPage(school: school),
+                            ),
+                          );
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Apagar Escola'),
+                              content: const Text(
+                                  'Tem certeza de que deseja excluir esta escola?'),
+                              actions: [
+                                TextButton(
+                                  child: const Text('Cancelar'),
+                                  onPressed: () => Navigator.pop(context),
+                                ),
+                                TextButton(
+                                  child: const Text('Deletar'),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    SchoolsRepository()
+                                        .deleteSchool(school.id!);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text(
+                                              'Escola excluida com sucesso.')),
+                                    );
+                                    _refreshSchools();
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ));
+          }
         } else {
-          return ListView.builder(
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              final school = snapshot.data![index + 1];
-              return ListTile(
-                title: Text(school.name + school.city + school.state),
-                subtitle: Text(school.state),
-              );
-            },
+          return const SizedBox(
+            height: 100,
+            child: Text('Cadastre uma nova escola'),
           );
         }
-      });
+      },
+    );
+  }
 }
-
-class Children {}
