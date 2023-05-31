@@ -37,27 +37,35 @@ class AppDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Home'),
             onTap: () {
+              Navigator.of(context)
+                  .popUntil((route) => !Navigator.of(context).canPop());
               Navigator.popAndPushNamed(context, '/home');
             },
           ),
           ListTile(
             title: const Text('Denúncias'),
             onTap: () {
+              Navigator.of(context)
+                  .popUntil((route) => !Navigator.of(context).canPop());
               Navigator.popAndPushNamed(context, '/complaint');
             },
           ),
           ListTile(
             title: const Text('Painel'),
             onTap: () {
-              Navigator.pushNamed(context, '/panel');
+              Navigator.of(context)
+                  .popUntil((route) => !Navigator.of(context).canPop());
+              Navigator.popAndPushNamed(context, '/panel');
             },
           ),
           ListTile(
             title: const Text('Sair'),
             onTap: () {
-              authService.logout().then((value) => value);
-              Navigator.pop(context);
-              Navigator.popAndPushNamed(context, '/auth/login');
+              authService.logout().then((value) {
+                Navigator.of(context)
+                    .popUntil((route) => !Navigator.of(context).canPop());
+                Navigator.of(context).popAndPushNamed('/auth/login');
+              });
             },
           ),
         ],

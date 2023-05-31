@@ -64,6 +64,7 @@ class _PanelPageState extends State<PanelPage> {
       "amarelo": Colors.yellow,
       "verde": Colors.green,
       "azul": Colors.blue,
+      "default": Colors.grey,
     };
 
     List<DataRow> output = [];

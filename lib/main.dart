@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:safe_schools/src/auth/auth_service.dart';
 import 'package:safe_schools/src/auth/login_page.dart';
-import 'package:safe_schools/src/auth/registraion_page.dart';
 import 'package:safe_schools/src/complaint/complaint_page.dart';
+import 'package:safe_schools/src/auth/registration/registration_page.dart';
 import 'package:safe_schools/src/home/home_page.dart';
 import 'package:safe_schools/src/panel/panel_page.dart';
 import 'package:safe_schools/src/shared/themes/color_schemes.g.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
