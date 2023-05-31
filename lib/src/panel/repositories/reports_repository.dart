@@ -28,7 +28,7 @@ class ReportsRepository {
     for (var i = 0; i < mapedResponse.length; i++) {
       output.add(
         AmountPerClassification(
-          classification: mapedResponse[i]["classification"],
+          classification: mapedResponse[i]["classification"] ?? "default",
           total: mapedResponse[i]["total"],
         ),
       );
