@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:safe_schools/src/auth/auth_service.dart';
-import 'package:safe_schools/src/shared/components/app_drawer.dart';
-import 'package:safe_schools/src/shared/components/app_scaffold.dart';
+
+//import 'package:safe_schools/src/shared/components/app_drawer.dart';
+//import 'package:safe_schools/src/shared/components/app_scaffold.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -41,15 +42,30 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Escolas Seguras'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Image.asset(
+              'lib/src/assets/images/escola.png',
+              fit: BoxFit.cover,
+              height: 40,
+            ),
+            const Text(
+              'Escolas Seguras',
+              style: TextStyle(color: Colors.white),
+            ),
+          ],
+        ),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: FormItems(
-            userName: userName,
-            password: password,
-            authService: authService,
+      body: SingleChildScrollView(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: FormItems(
+              userName: userName,
+              password: password,
+              authService: authService,
+            ),
           ),
         ),
       ),
@@ -71,48 +87,97 @@ class FormItems extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      TextFormField(
-        controller: userName,
-        decoration: const InputDecoration(hintText: 'usuário'),
-      ),
-      const SizedBox(
-        height: 8.0,
-      ),
-      TextFormField(
-        controller: password,
-        decoration: const InputDecoration(hintText: 'senha'),
-        obscureText: true,
-      ),
-      const SizedBox(
-        height: 8.0,
-      ),
-      Row(
+    return Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ElevatedButton(
-            onPressed: () {
-              authService.login(userName.text, password.text).then((value) {
-                if (value == true) {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/home');
-                }
-              });
-            },
-            child: const Text('entrar'),
+        children: <Widget>[
+          Container(
+            padding: const EdgeInsets.all(50.0),
+            child: const Align(
+              alignment: Alignment.topLeft,
+              child: Text(
+                "O Aplicativo Escola Segura trata-se de uma iniciativa do IFGoiano para mitigar os efeitos devastadores causados pelos ataques a escolas. \n A proposta central é trazer mais segurança e integrar a comunidade a escola com a forças de segurança. \n Este trabalho é um complemento as ações delimitadas pelo governo do estado.",
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+            ),
+          ),
+          TextFormField(
+            controller: userName,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: const BorderSide(
+                  width: 0.5,
+                  style: BorderStyle.none,
+                ),
+              ),
+              hintText: 'Usuário',
+              hintStyle: const TextStyle(color: Colors.white),
+            ),
+            style: const TextStyle(color: Colors.white),
           ),
           const SizedBox(
-            width: 8.0,
+            height: 8.0,
           ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pushNamed(context, '/auth/registration');
-            },
-            child: const Text('registrar'),
+          TextFormField(
+            controller: password,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: const BorderSide(
+                  width: 0.5,
+                  style: BorderStyle.none,
+                  color: Colors.white,
+                ),
+              ),
+              hintText: 'Senha',
+              hintStyle: const TextStyle(color: Colors.white),
+            ),
+            style: const TextStyle(color: Colors.white),
+            obscureText: true,
           ),
-        ],
-      )
-    ]);
+          const SizedBox(
+            height: 8.0,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  authService.login(userName.text, password.text).then(
+                    (value) {
+                      if (value == true) {
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/home');
+                      }
+                    },
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                ),
+                child: const Text(
+                  'Entrar',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              const SizedBox(
+                width: 8.0,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/auth/registration');
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                ),
+                child: const Text(
+                  'Registrar',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          )
+        ]);
   }
 }
