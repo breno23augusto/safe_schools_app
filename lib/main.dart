@@ -7,6 +7,7 @@ import 'package:safe_schools/src/home/home_page.dart';
 import 'package:safe_schools/src/shared/themes/color_schemes.g.dart';
 
 void main() {
+  // ignore: prefer_const_constructors
   runApp(MyApp());
 }
 
