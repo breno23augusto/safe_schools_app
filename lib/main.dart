@@ -12,8 +12,12 @@ import 'package:safe_schools/src/shared/themes/color_schemes.g.dart';
 
 void main() {
 <<<<<<< HEAD
+<<<<<<< HEAD
   // ignore: prefer_const_constructors
   runApp(MyApp());
+=======
+  runApp(const MyApp());
+>>>>>>> f56d88e89f7600e6dc9958a27dc3e8ff7b8ca82c
 =======
   runApp(const MyApp());
 >>>>>>> f56d88e89f7600e6dc9958a27dc3e8ff7b8ca82c
